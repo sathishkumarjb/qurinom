@@ -30,13 +30,13 @@ jobs:
 
       # Install packages
       - name: Install dependencies
-        run: npm install
+        run: yarn
 
       # Build an optimized production build
       - name: Production build
         run: |
           unset CI
-          npm run build
+          yarn build
 
       # Deploy to the S3 server
       - name: Deploy to S3
