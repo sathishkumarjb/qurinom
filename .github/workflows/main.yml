@@ -40,7 +40,7 @@ jobs:
 
       # Deploy to the S3 server
       - name: Deploy to S3
-        uses: jakejarvis/s3-sync-action@master
+        uses: jakejarvis/s3-sync-action@main
         with:
           args: --acl public-read --delete
         env:
