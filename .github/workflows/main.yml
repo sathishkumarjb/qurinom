@@ -1,31 +1,29 @@
-# Name of workflow as seen in Github actions tab
-name: dev-build-and-deploy
-# Run workflow only on push to dev branch
+name: CI
+
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches:
-      - main
+    branches: [main]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # To build the project
-  build-tambola:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checking out code
-        uses: actions/checkout@v3
-      - name: Installing Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.12.0"
-      - name: Installing dependencies
-        run: yarn
-      - name: Building project
-        run: yarn build
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Deploy to S3 bucket
-        run: aws s3 sync ./dist/ s3://qurinom-test --delete
+      - name: Build React App
+        run: yarn && yarn build
+      - name: Deploy app build to S3 bucket
+        run: aws s3 sync ./build/ s3://qurinom-test --delete
